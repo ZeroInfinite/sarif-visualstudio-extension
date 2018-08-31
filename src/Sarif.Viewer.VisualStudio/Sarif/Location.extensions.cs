@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
 using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.Sarif.Viewer.Models;
 
@@ -9,7 +10,7 @@ namespace Microsoft.Sarif.Viewer.Sarif
 {
     static class LocationExtensions
     {
-        public static ThreadFlowLocationModel ToThreadFlowLocationModel(this Location location)
+        public static ThreadFlowLocationModel ToThreadFlowLocationModel(this Location location, IDictionary<string, Uri> originalUriBaseIds)
         {
             var model = new ThreadFlowLocationModel();
             PhysicalLocation physicalLocation = location.PhysicalLocation;
@@ -24,7 +25,8 @@ namespace Microsoft.Sarif.Viewer.Sarif
                 if (uri != null)
                 {
                     model.FilePath = uri.ToPath();
-                    model.UriBaseId = physicalLocation.FileLocation.UriBaseId;
+                    model.FileLocation = physicalLocation.FileLocation;
+                    model.OriginalUriBaseIds = originalUriBaseIds;
                 }
             }
 

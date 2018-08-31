@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.Sarif.Viewer.Models;
@@ -10,7 +11,7 @@ namespace Microsoft.Sarif.Viewer.Sarif
 {
     static class CodeFlowExtensions
     {
-        public static ThreadFlowLocationCollection ToThreadFlowLocationCollection (this CodeFlow codeFlow)
+        public static ThreadFlowLocationCollection ToThreadFlowLocationCollection (this CodeFlow codeFlow, IDictionary<string, Uri> originalUriBaseIds)
         {
             if (codeFlow == null)
             {
@@ -28,7 +29,7 @@ namespace Microsoft.Sarif.Viewer.Sarif
                     // far as SARIF producers). For now we skip these.
                     if (location.Location?.PhysicalLocation == null) { continue; }
 
-                    model.Add(location.ToThreadFlowLocationModel());
+                    model.Add(location.ToThreadFlowLocationModel(originalUriBaseIds));
                 }
             }
 

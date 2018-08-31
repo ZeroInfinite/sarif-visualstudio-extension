@@ -258,7 +258,7 @@ namespace Microsoft.Sarif.Viewer
             return S_OK;
         }
 
-        public bool TryRebaselineAllSarifErrors(string uriBaseId, string originalFilename)
+        public bool TryRebaselineAllSarifErrors(IDictionary<string, Uri> originalUriBaseIds, FileLocation fileLocation, string originalFilename)
         {
             if (CurrentSarifResult == null)
             {
@@ -309,7 +309,7 @@ namespace Microsoft.Sarif.Viewer
                 else
                 {
                     // User needs to locate file.
-                    rebaselinedFile = GetRebaselinedFileName(uriBaseId, originalFilename);
+                    rebaselinedFile = GetRebaselinedFileName(originalUriBaseIds, fileLocation, originalFilename);
                 }
 
                 if (String.IsNullOrEmpty(rebaselinedFile) || originalFilename.Equals(rebaselinedFile, StringComparison.OrdinalIgnoreCase))
@@ -410,9 +410,17 @@ namespace Microsoft.Sarif.Viewer
         }
 
         // Internal rather than private for unit testability.
-        internal string GetRebaselinedFileName(string uriBaseId, string pathFromLogFile)
+        internal string GetRebaselinedFileName(IDictionary<string, Uri> originalUriBaseIds, FileLocation fileLocation, string pathFromLogFile)
         {
+            Uri absoluteUri;
             Uri relativeUri = null;
+            string uriBaseId = fileLocation.UriBaseId;
+
+            if (fileLocation.TryReconstructAbsoluteUri(originalUriBaseIds, out absoluteUri))
+            {
+                return absoluteUri.ToPath();
+            }
+
 
             if (!String.IsNullOrEmpty(uriBaseId) && Uri.TryCreate(pathFromLogFile, UriKind.Relative, out relativeUri))
             {

@@ -40,7 +40,7 @@ namespace Microsoft.Sarif.Viewer
             run.TryGetRule(result.RuleId, out rule);
             Message = result.GetMessageText(rule, concise: false);
             ShortMessage = result.GetMessageText(rule, concise: true);
-            FileName = result.GetPrimaryTargetFile();
+            FileName = result.GetPrimaryTargetFile(run.OriginalUriBaseIds);
             ProjectName = projectNameCache.GetName(FileName);
             Category = result.GetCategory();
             Region = result.GetPrimaryTargetRegion();
@@ -71,7 +71,7 @@ namespace Microsoft.Sarif.Viewer
             {
                 foreach (Location location in result.Locations)
                 {
-                    Locations.Add(location.ToThreadFlowLocationModel());
+                    Locations.Add(location.ToThreadFlowLocationModel(run.OriginalUriBaseIds));
                 }
             }
 
@@ -79,7 +79,7 @@ namespace Microsoft.Sarif.Viewer
             {
                 foreach (Location location in result.RelatedLocations)
                 {
-                    RelatedLocations.Add(location.ToThreadFlowLocationModel());
+                    RelatedLocations.Add(location.ToThreadFlowLocationModel(run.OriginalUriBaseIds));
                 }
             }
 

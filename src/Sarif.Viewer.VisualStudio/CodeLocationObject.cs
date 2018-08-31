@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Sarif;
@@ -15,9 +16,10 @@ namespace Microsoft.Sarif.Viewer
     public abstract class CodeLocationObject : NotifyPropertyChangedObject
     {
         private Region _region;
-        protected ResultTextMarker _lineMarker;
         protected string _filePath;
-        protected string _uriBaseId;
+        protected FileLocation _fileLocation;
+        protected ResultTextMarker _lineMarker;
+        protected IDictionary<string, Uri> _originalUriBaseIds;
 
         internal virtual ResultTextMarker LineMarker
         {
@@ -75,24 +77,45 @@ namespace Microsoft.Sarif.Viewer
             }
         }
 
-        internal virtual string UriBaseId
+        internal virtual IDictionary<string, Uri> OriginalUriBaseIds
         {
             get
             {
-                return _uriBaseId;
+                return _originalUriBaseIds;
             }
             set
             {
-                if (value != _uriBaseId)
+                if (value != _originalUriBaseIds)
                 {
-                    _uriBaseId = value;
+                    _originalUriBaseIds = value;
 
                     if (this.LineMarker != null)
                     {
-                        this.LineMarker.UriBaseId = _uriBaseId;
+                        this.LineMarker.OriginalUriBaseIds = _originalUriBaseIds;
                     }
 
-                    NotifyPropertyChanged("UriBaseId");
+                    NotifyPropertyChanged("OriginalUriBaseIds");
+                }
+            }
+        }
+        internal virtual FileLocation FileLocation
+        {
+            get
+            {
+                return _fileLocation;
+            }
+            set
+            {
+                if (value != _fileLocation)
+                {
+                    _fileLocation = value;
+
+                    if (this.LineMarker != null)
+                    {
+                        this.LineMarker.FileLocation = _fileLocation;
+                    }
+
+                    NotifyPropertyChanged("FileLocation");
                 }
             }
         }

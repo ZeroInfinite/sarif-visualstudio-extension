@@ -308,7 +308,8 @@ namespace Microsoft.Sarif.Viewer.ErrorList
                 {
                     EnsureHashExists(file.Value);
                     var fileDetails = new FileDetailsModel(file.Value);
-                    CodeAnalysisResultManager.Instance.FileDetails.Add(key.ToPath(), fileDetails);
+                    //CodeAnalysisResultManager.Instance.FileDetails.Add(key.ToPath(), fileDetails);
+                    CodeAnalysisResultManager.Instance.FileDetails[key.ToPath()] =  fileDetails;
                 }
             }
         }

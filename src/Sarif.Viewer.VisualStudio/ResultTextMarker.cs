@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.CodeAnalysis.Sarif;
@@ -35,7 +36,8 @@ namespace Microsoft.Sarif.Viewer
         private long? m_docCookie;
 
         public string FullFilePath { get; set; }
-        public string UriBaseId { get; set; }
+        public IDictionary<string, Uri> OriginalUriBaseIds { get; set; }
+        public FileLocation FileLocation { get; set; }
         public string Color { get; set; }
 
         public event EventHandler RaiseRegionSelected;
@@ -67,7 +69,7 @@ namespace Microsoft.Sarif.Viewer
 
             if (!File.Exists(this.FullFilePath))
             {
-                if (!CodeAnalysisResultManager.Instance.TryRebaselineAllSarifErrors(this.UriBaseId, this.FullFilePath))
+                if (!CodeAnalysisResultManager.Instance.TryRebaselineAllSarifErrors(this.OriginalUriBaseIds, this.FileLocation, this.FullFilePath))
                 {
                     return null;
                 }

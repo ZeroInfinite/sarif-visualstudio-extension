@@ -33,7 +33,7 @@ namespace Microsoft.Sarif.Viewer.Sarif
             return string.Join(Environment.NewLine, messageLines);
         }
 
-        public static string GetPrimaryTargetFile(this Result result)
+        public static string GetPrimaryTargetFile(this Result result, IDictionary<string, Uri> originalUriBaseIds)
         {
             if (result == null)
             {
@@ -49,6 +49,13 @@ namespace Microsoft.Sarif.Viewer.Sarif
 
             if (primaryLocation.PhysicalLocation?.FileLocation != null)
             {
+                Uri uri;
+
+                if (primaryLocation.PhysicalLocation.FileLocation.TryReconstructAbsoluteUri(originalUriBaseIds, out uri))
+                {
+                    return uri.ToPath();
+                }
+
                 return primaryLocation.PhysicalLocation.FileLocation.Uri.ToPath();
             }
             else if (primaryLocation.FullyQualifiedLogicalName != null)
